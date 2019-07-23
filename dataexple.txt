@@ -1,0 +1,9 @@
+Name	Firstname	Age
+Smith	John	25
+Yume	Jean	17
+Ax	Max	65
+May	June	28
+Lancelot	Lake	35
+Steiner	Beate	40
+Gran	Lyria	17
+Squall	Linoa	14

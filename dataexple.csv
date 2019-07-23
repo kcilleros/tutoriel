@@ -1,0 +1,31 @@
+Zoo;Animal;Size.cm;Number.ind;Area;Food.kg
+Paris;Tiger;390;46;Forest;190210
+Paris;Whale;2990;169;Aquatic;62724096,5
+Paris;Zebra;150;17;Savannah;21335
+Paris;Platypus;51;10;Aquatic;2134
+Paris;Gecko;40;131;Desert;11528
+Paris;Red panda;60;123;Forest;28486,8
+Madrid;Tiger;390;93;Forest;371535
+Madrid;Whale;2990;149;Aquatic;55296656,5
+Madrid;Zebra;150;64;Savannah;82240
+Madrid;Platypus;51;59;Aquatic;6690,6
+Madrid;Gecko;40;40;Desert;5120
+Madrid;Red panda;60;185;Forest;52096
+Rome;Tiger;390;45;Forest;184725
+Rome;Whale;2990;13;Aquatic;4825450,5
+Rome;Zebra;150;8;Savannah;9240
+Rome;Platypus;51;51;Aquatic;4763,4
+Rome;Gecko;40;159;Desert;31482
+Rome;Red panda;60;100;Forest;29160
+London;Tiger;390;12;Forest;48060
+London;Whale;2990;156;Aquatic;57922566
+London;Zebra;150;195;Savannah;252525
+London;Platypus;51;72;Aquatic;19684,8
+London;Gecko;40;24;Desert;4032
+London;Red panda;60;36;Forest;7617,6
+Zurich;Tiger;390;65;Forest;272025
+Zurich;Whale;2990;15;Aquatic;5567977,5
+Zurich;Zebra;150;33;Savannah;37125
+Zurich;Platypus;51;106;Aquatic;23680,4
+Zurich;Gecko;40;191;Desert;37818
+Zurich;Red panda;60;99;Forest;25898,4
