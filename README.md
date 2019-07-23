@@ -1,2 +1,2 @@
 # tutoriel
-data for r tuto
+Data for R tutorials
