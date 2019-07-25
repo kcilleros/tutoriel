@@ -1,0 +1,721 @@
+---
+title: "Les bases"
+output: 
+  learnr::tutorial:
+    progressive: false
+    theme: 'rstudio'
+runtime: shiny_prerendered
+fontsize: 22pt
+---
+
+```{r setup, include=FALSE}
+library(learnr)
+knitr::opts_chunk$set(echo = FALSE)
+# library(magrittr)
+```
+
+Avant-propos
+-------
+
+Dans la suite de documents html qui suivent, voici quelques conventions que j'ai prise:
+
+- le texte normal
+- `les commandes R`
+- *les objets R*
+- $les\ quelques\ formules\ mathématiques$
+- ➤ indique que c'est à vous d'écrire/réfléchir pour obtenir ce qui vous est demandé
+
+La console de R est affichée comme suit, avec les sorties marquées ##. 
+```{r echo=TRUE}
+print("La console de R")
+```
+
+Le champ suivant vous permet d'écrire du code et de l'exécuter en cliquant sur Run code. Vous avez parfois des aides ou des astuces qui sont disponibles en cliquant sur le bouton Hint.
+
+```{r field, exercise=TRUE, exercise.eval=TRUE}
+
+```
+
+```{r field-hint-1}
+# Solution ou aide ici
+```
+
+A tout moment, vous pouvez faire `help(fonction)` ou `?fonction` pour obtenir de l'aide sur une fonction.
+
+R comme calculatrice
+-------
+
+Avant de plonger dans le langage de R, on peut s'en servir comme une calculatrice. Par exemple, si on écrit `5 + 7` dans la console. 
+```{r five-plus-seven, echo=TRUE, exercise=F}
+5 + 7
+```
+
+La console affiche 12. 
+
+➤A votre tour, calculez le résultat de $3+8^4\over\sqrt2\times(3^3-1)$.
+
+*Aide : $x^n$ s'écrit `x^n` et $\sqrt x$ s'écrit `sqrt(x)`.*
+
+```{r calcul-limit, exercise=TRUE, exercise.eval=TRUE}
+
+```
+
+```{r calcul-limit-hint-1}
+#La base, c'est la division
+.../...
+```
+
+```{r calcul-limit-hint-2}
+#Ensuite on a une somme et un produit
+(... + ...)/(... * ...)
+```
+
+```{r calcul-limit-hint-3}
+#Attention aux parenthèses pour la soustraction
+(... + ...)/(... * (... - ...))
+```
+
+```{r calcul-limit-solution}
+#La solution
+(3 + 8^4)/(sqrt(2) * (3^3 - 1))
+```
+
+Mais se servir de R comme d'une simple calculatrice, c'est comme se servir d'un multicuiseur pour juste faire bouillir de l'eau. 
+
+Bases du language R
+-------
+
+
+Les exercices suivants vous permettront de voir/revoir quelques bases du language R.
+Au programme :
+
+1. Les assignations
+2. Les classes d'objet
+3. L'import/export de fichiers
+4. Les graphes de base
+
+
+On va rester sur fonctions basiques, disponibles sans charger de "library".
+
+
+Les assignations
+-------
+
+
+Une des bases très utile du language R est de pouvoir assigner des 'valeurs' à un nom pour créer des objets. 
+
+Par exemple, on peut écrire `a <- 1` pour assigner la valeur 1 à *a*. On peut aussi assigner le résultat d'opération. 
+
+➤Essayez d'assigner le résultat de `5 + 7` à *b*.
+```{r assign-sum, exercise=T}
+
+```
+La console n'affiche rien. Pour afficher ce que contient b, il suffit de taper `b`, `print(b)` ou `get("b")`.
+
+```{r}
+a <- 1
+b <- 5 + 7
+```
+
+```{r print-b, echo=TRUE, exercise=F}
+b
+print(b)
+get("b")
+```
+
+Ces nouveaux objets (a et b) peuvent eux aussi servir à créer de nouveaux objets.
+
+➤Créez l'objet *c0* qui contient la somme de *a* et *b*.
+
+```{r assign-object, exercise=T}
+
+```
+
+*Point info : je ne vous ai pas fait créer l'objet c car c est une fonction qui existe déjà dans R. Il faut éviter d'assigner des valeurs à des choses qui existent de base.*
+
+### Arrêt sur les outils `<-`, `assign` et `=`
+
+Pour le moment, nous avons assigner des valeurs avec l'outil `<-`. On peut l'interpréter comme "ce qui est à gauche contient ce qui est à droite", ou plus généralement "**ce qui est à la pointe de la flèche stocke ce qui est à l'autre bout**".
+
+La fonction `assign()` est l'équivalent de `<-` : écrire `a <- 1` équivaut à `assign("a", 1)` (en français : j'assigne à l'objet *a* la valeur 1). La fonction `assign` peut avoir des avantages dans certaines situations (dans des boucles par exemple).
+
+Il se peut que vous voyez des codes où l'assignation se fasse avec `=`. Il est déconseillé de s'en servir pour l'assignation (ou du moins de mélanger les deux).
+Par exemple : `a <- b <- 1` fonctionne mais `a <- b = 1` non.
+
+➤ Vous pouvez essayer dans la zone suivante :
+```{r assign-tools, exercise=T}
+
+```
+
+➤ 2 questions pour voir si vous avez suivi :
+```{r qcm-assign-a, echo=FALSE}
+quiz(
+  question("Quelle(s) commande(s) permet(tent) de stocker la valeur 8 dans *d* ?",
+           answer("`d <- 8`", correct = TRUE),
+           answer("`assign(\"8\", d)`"),
+           answer("`d <- (1 + 1) * 2^2`", correct = TRUE),
+           answer("`8 = d`"), random_answer_order = T, allow_retry = T
+  ),
+  question("Quelle commande est incorrecte ?",
+           answer("`(8 + 3)/(4 * 5) -> e`", message = "Le petit piège. Relisez la phrase en gras au dessus."),
+           answer("`assign(\"e\", 1/23 + 48)`", message = "Pas de problème pour celle là."),
+           answer("`e <- (1 + ( 2 + ( 3 + 4))`", correct = TRUE, message = "En effet, il manque une parenthèse à fermer."),
+           answer("`e <- a <- (b + d)/sqrt(2)`", message = "Elle marche (tant que b et d sont définis)."), random_answer_order = T, allow_retry = T
+  )
+  
+)
+```
+
+
+Les classes d'objet (les plus courantes)
+-------
+
+Jusqu'à présent nous avons stocké des nombres dans les objets, mais il est possible d'assigner à une multitude de classes d'objet. On va juste évoquer les plus courants ici.
+Pour connaître la classe d'un objet, il sufffit d'utiliser la fonction `class()`.
+
+
+* Tout d'abord, la classe "numeric" qui correspond aux nombres, ce que nous avons utilisés depuis le début.
+
+```{r echo=TRUE}
+class(a)
+class(b)
+```
+
+* La classe "logical" correspond aux variables de type booléen, généralement codées en VRAI/FAUX (TRUE/FALSE dans R). TRUE et FALSE sont des valeurs reconnus par R directement, comme leurs diminutifs T et F. Il suffit donc d'assigner ces valeurs à un objet.
+
+➤ Stockez la valeur FALSE dans l'objet *f*.
+
+```{r booleen, exercise=TRUE}
+
+```
+
+Il faut noter que le code `f <- F` marche aussi, car le language R est sensible à la casse des caractères. Donc pour R, f $\neq$ F.
+
+
+* Il est possible de stocker des chaînes de caractères dans un objet. Par exemple, `g <- "pyramide"` va stocker la chaîne "pyramide" dans *g*. 
+
+➤ Créez cet objet et vérifiez sa classe.
+
+```{r}
+g <- "pyramide"
+```
+
+
+```{r pyramide, exercise=T}
+
+```
+
+Il est important de mettre les guillemets pour les caractères, sinon R va chercher l'objet *pyramide*, qui n'existe pas.
+
+* Une classe qui ressemble au "character" est la classe "factor" (facteur en français). Cette classe permet de créer des niveaux ou catégories (par exemple petit-moyen-grand). Pour créer un objet de cette classe, il faut utiliser la fonction `factor()`. Par exemple, `factor("arbre")` permet de créer une valeur (arbre) de classe "factor". 
+
+➤ Créez l'objet *h* qui contient la valeur de *g* en classe "factor" et vérifier sa classe.
+```{r pyramide-class, exercise=TRUE, exercise.eval=TRUE}
+
+```
+
+
+Vecteur, matrices, tableau
+-------
+
+![](images/dataStructuresNew.png){width=750px}
+
+## Les vecteurs
+Jusqu'à présent chaque objet que nous avons créés ne contient qu'une seule valeur. Mais un objet peut contenir plusieurs valeurs. Dans ce cas, on peut appeler un tel objet vecteur. Pour les créer, une fonction basique est `c()` (concatener). Il suffit de séparer chacune des valeurs par une virgule à l'intérieur des parenthèses.
+
+➤ Créez l'objet *i* qui contient les valeurs entières de 1 à 5 et affichez le, ainsi que sa classe.
+```{r vecteur, exercise=TRUE, exercise.eval=TRUE}
+
+```
+
+```{r vecteur-hint-1}
+# 3 solutions pour créer i :
+i <- c(1, 2, 3, 4 ,5) #concatener les valeurs 1 à 5
+i <- 1:5 #générer une séquence régulière de 1 à 5 (fonction :)
+i <- seq(from = 1, to = 5, by = 1) #générer une séquence allant de 1 à 5 par pas de 1 (fonction seq)
+```
+
+```{r}
+i <- 1:5
+```
+
+
+La classe d'un vecteur correspond à la classe des valeurs qu'il contient.
+
+Les vecteurs sont des objets à une dimension, la longueur. Pour obtenir la longueur d'un vecteur il faut utiliser la fonction `length()`.
+
+```{r echo=TRUE}
+length(i)
+```
+
+Pour sélectionner une valeur dans un vecteur, on utilise les crochets `x[...]`, où "..." doit être remplacé par l'index du/des valeurs que l'on veut. Par exemple, pour sélectionner la 3^ème^ valeur de *i*, il faut écrire `i[3]`.
+
+➤ Comment sélectionner la 2^ème^ et la 4^ème^ valeurs de *i* ?
+
+```{r select-vecteur, exercise=TRUE}
+
+```
+
+```{r select-vecteur-hint-1}
+## Il existe deux solutions :
+# 1. en utilisant les index
+# 2. en utilisant des valeurs logiques
+
+```
+
+Les vecteurs peuvent contenir différentes valeurs mais elles ne peuvent pas être de différentes classes. Si on mélange plusieurs classes, les valeurs sont toutes converties en une seule. 
+
+Il suffit qu'une seule valeur soit un "character" pour que toutes les valeurs deviennent des "character".
+
+```{r echo=TRUE}
+j <- c(1, "a", factor("b"), FALSE) #numeric, character, factor, logical
+```
+
+```{r}
+print(j); class(j)
+```
+
+
+➤ A votre avis, quelle est la classe d'un tel vecteur : `c(1, factor("b"), FALSE)` ? Et de celui ci `c(1, FALSE)` ?
+
+```{r vecteur-combi, exercise = T}
+
+```
+
+## Les matrices
+
+Les vecteurs sont des objets à une dimension (leur longueur). Si on colle des vecteurs les un en dessous des autres pour faire un objet en 2D, on crée dans R un objet de classe "matrix", ou matrices. 
+
+Pour coller des lignes les unes en dessous des autres, il faut utiliser la fonction `rbind()`. Elle fonctionne comme la fonction `c()`.
+
+➤ Complétez le code ci-dessous pour créer la matrice *m* et l'afficher.
+
+```{r matrix-m, exercise=TRUE, exercise.eval=TRUE}
+k <- c(0, 1, 3, 4)
+l <- c(2, 5, 0, 1)
+
+
+
+```
+
+La taille d'une matrice est donc définie par le nombre de lignes et le nombre de colonnes. Pour connaître les dimensions d'une matrice, on peut utiliser les fonctions `dim()`, `nrow()` et `ncol()`.
+
+
+```{r}
+k <- c(0, 1, 3, 4)
+l <- c(2, 5, 0, 1)
+
+m <- rbind(k, l)
+```
+
+```{r echo=TRUE}
+dim(m)
+nrow(m)
+ncol(m)
+```
+
+➤A quoi correspond chaque valeur ?
+```{r dimension-matrix, exercise=TRUE, exercise.eval=TRUE}
+#dim retourne ... de la matrice
+#nrow retourne ... de la matrice
+#ncol retourne ... de la matrice
+```
+
+
+Comme pour les vecteurs, on peut sélectionner différents éléments d'une matrice avec `m[...]`. Cependant, les matrices ont deux dimensions (contre 1 pour les vecteurs). 
+
+➤ Comment sélectionner 1 valeur d'une matrice, par exemple la valeur 3 de *m* ?
+
+```{r selection-matrix, exercise=TRUE}
+
+```
+
+```{r qcm-matrix, echo=FALSE}
+quiz(
+  question("Que fait la commande `m[1,]` ? (1 réponse)",
+           answer("Elle renvoie la première valeur de *m*."),
+           answer("Elle renvoie la première ligne de *m*.", correct = TRUE, message = "Et pour sélectionner la première colonne, il faut faire `m[,1]`."),
+           answer("Elle renvoie la première colonne de *m*."),
+           answer("Elle renvoie la valeur de la première colonne, première ligne de *m*`"), random_answer_order = T, allow_retry = T),
+  
+  question("Que fait la commande `m[4]` ? (1 ou plusieurs réponses)",
+           answer("Elle renvoie la valeur de la deuxième ligne, deuxième colonne de *m*.", correct = TRUE),
+           answer("Elle renvoie la valeur de la première ligne, quatrième colonne de *m*."),
+           answer("Elle renvoie la quatrième valeur de *m*.", correct = TRUE, message = "Une matrice dans R se comporte comme un vecteur à deux dimensions avec les valeursrangées par colonne. La quatrième valeur dans une matrice de dimension (4,2) est donc la valeur de la 2^ème colonne, 2^ème ligne."),
+           answer("La commande retourne une erreur."), random_answer_order = T, allow_retry = T)
+)
+```
+
+Comme pour les vecteurs, les valeurs dans une matrice doivent être de même classe. Combiner des "character" et des "numeric" ou des "factor" convertira toutes les valeurs en "character".
+
+Un exemple où la matrice est construite à partir de `cbind()` (équivalent de `rbind()` où les vecteurs sont collés en colonnes).
+
+```{r echo=TRUE}
+cbind(c("a",1,2), c(3,"b",4))
+```
+
+De même, combiner des "numeric" et des "factor" convertira toutes les valeurs en "numeric".
+
+
+Une autre façon de construire une matrice est d'utiliser la fonction `matrix()`. 
+
+➤ Utilisez la fonction `matrix()` pour créer une matrice identique à celle ci (si besoin, utilisez l'aide de la fonction):
+
+```{r echo=FALSE}
+matrix(data = c(1,1,2,3,0,10000,-1,4,8), nrow = 3, ncol = 3, byrow = TRUE)
+```
+
+
+```{r matrix-function, exercise=TRUE, exercise.eval=TRUE}
+#Voici la fonction matrix avec les arguments importants à renseigner
+#matrix(data =, nrow = , ncol = , byrow = )
+
+```
+
+## Les 'array'
+
+Les 'array' sont une extension des matrices, pour avoir plus de 2 dimensions. La fonction pour les créer est `array(data, dim = nombre de dimension et taille)`. Voici un exemple 'd'array' à 3 dimensions.
+
+```{r echo=TRUE}
+array(data = 1:24, dim = c(4,3,2))
+```
+
+R représente dans la console les 'array' par trances de deux dimensions. Il indique donc quelle tranche est écrite par la représentation ", , 1". Voici une image qui représente bien la structure des 'array'.
+
+![](images/Common-data-structures-in-R.png){width=750px}
+
+Le principe est semblable aux matrices donc on ne s'étend pas plus sur les 'array'. Sachez juste que ça peut être utile pour éviter de créer x matrices identiques.
+
+## Les 'data.frame'
+
+Les 'data.frame' sont similaires aux matrices, mais elles ont l'avantage de pouvoir contenir des colonnes de différentes classes. Par exemple :
+
+```{r}
+data.frame(numeric = 1:3, character = as.character(letters[1:3]), factor = factor(LETTERS[1:3]), logical = c(TRUE, FALSE, FALSE), stringsAsFactors = F)
+```
+
+Pour créer une 'data.frame', il faut utiliser la fonction `data.frame(nom.colonne.1 = ..., nom.colonne.2=...)`.
+
+
+➤ A partir des quatre vecteurs définis, créez la 'data.frame' *p* qui correspond à ce tableau :
+![](images/df-exemple.PNG)
+
+```{r df-creation, exercise=TRUE, exercise.eval=TRUE, exercise.lines = 6}
+nom <- c("Jon Wayne", "Ace", "Remy")
+animal_totem <- c("Parrot", "Eagle", "Leopard")
+numero_fetiche <- c(25, 15, 17)
+couleur <- c("red", "green", "blue")
+
+
+```
+
+
+```{r}
+nom <- c("Jon Wayne", "Ace", "Remy")
+animal_totem <- c("Parrot", "Eagle", "Leopard")
+numero_fetiche <- c(25, 15, 17)
+couleur <- c("red", "green", "blue")
+p <- data.frame(name = nom, favcolor = couleur, poweranimal = animal_totem, favnum = numero_fetiche)
+```
+
+➤ Vérifiez les classes des variables de *p*.
+
+Vu que les 'data.frame' peuvent comporter des variables/colonnes de différents classes, il est important de vérifier ces classes. Un moyen simple est d'utiliser la fonction `str()`, qui renvoie la strucure du tableau.
+
+```{r df-str, exercise=TRUE, exercise.lines = 3}
+
+```
+
+Si on veut juste la classe d'une seule variable, on peut comme pour un vecteur utiliser `class()`.
+
+```{r qcm-df-class, echo=FALSE}
+question("Quelle commande permet de le faire pour la première variable ? (1 réponse)",
+         answer("`class(p[1,])`"),
+         answer("`class(p[,1])`", correct = TRUE),
+         answer("`class(p)`"),
+         answer("`class(p[1])`"), random_answer_order = T, allow_retry = T)
+
+```
+
+En plus de la sélection par index, une variable peut être sélectionner en utilisant le `$` en écrivant `nom.data.frame$nom.colonne`, ou alors en utilisant le nom de la variable à la place de l'index (`nom.data.frame[,"nom.colonne"]`).
+
+➤ Vérifiez que les trois méthodes décrites donnent le même résultat.
+```{r df-colonne-essai, exercise=TRUE}
+
+```
+
+Les autres fonctions (`dim`, `nrow`, `ncol`) fonctionnent aussi.
+
+
+
+Les listes
+-------
+
+Les listes sont des objets très pratiques dans R. Elles sont des "conteneurs" qui peremttent de stocker tout type de classes d'objet différentes.
+
+Pour créer une liste, il faut utiliser la fonction `list(nom.1 = objet/valeur.1, nom.2 = objet/valeur.2, ...) `.
+
+➤ Par exemple, créez la liste *n* qui contient la matrice *m*, la data.frame *p*, le vecteur *a* et votre nom, chacun avec un nom approprié.
+
+```{r list, exercise=TRUE}
+n <- 
+  
+  n  
+```
+
+```{r}
+n <- list(matrice = m, data.frame = p, vector = a, name = "kevin")
+```
+
+Les listes n'ont qu'une seule dimension : leur longueur (quelle fonction ?), qui correspond au nombre d'objets contenus dans la liste. Ici, n est de longueur 4.
+
+Import et export de données
+-------
+```{r}
+link_to_tab1 <- "https://raw.githubusercontent.com/kcilleros/tutoriel/master/dataexple.txt?token=AMF6JOJ5PBNSP4HQKHT2CXC5IAHSQ"
+identity <- read.table(link_to_tab1, sep = "\t", h = T, stringsAsFactors = F)
+
+link_to_tab2 <- "https://raw.githubusercontent.com/kcilleros/tutoriel/master/dataexple.csv?token=AMF6JOO2B5MQ3SVWYFGHCGS5IAIOO"
+zoo <- read.csv(link_to_tab2, sep = ";", h = T, dec = ",")
+
+
+```
+
+Deux fonctions basiques permettent de charger des données à partir d'une source externe : `read.table()` et `load()`.
+
+### La famille write et read
+
+La fonction `read.table()` permet de lire les fichiers qui sont sous format tableau, avec les observations en ligne et les variables en colonne.
+
+Voici les arguments de la fonction :
+
+```{r}
+args(read.table)
+```
+
+Les arguments les plus importants :
+
+- 'file' : le chemin vers le fichier que vous voulez lire
+- 'header' : est-ce que la première ligne du fichier comporte les noms des variables (TRUE si c'est le cas)
+- 'sep' : le caractère utilisé pour séparer les différents cellules du fichier(" ", ,", ";", "\t" pour les tabulations)
+- 'dec' : le symbole utilisé pour marquer les décimales des valeurs numériques
+- 'stringsAsFactors' : est-ce que les variables qui contiennent du texte doivent être converties en facteur ou non
+
+Voici 2 fichiers à charger dans R :
+
+data-exple.txt : ![data-exple.txt](images/data-exple-txt.PNG)
+
+data-exple.csv : ![data-exple.csv](images/data-exple-csv.PNG)
+
+➤ Utilisez la fonction `read.table` pour charger ces deux fichiers dans R. Pour le premier, laissez les caractères en format "character" et transformez les en "factor" pour le second.
+
+```{r df, exercise=TRUE, exercise.eval=FALSE, exercise.lines = 10}
+path_to_identity <- "https://raw.githubusercontent.com/kcilleros/tutoriel/master/dataexple.txt?token=AMF6JOJ5PBNSP4HQKHT2CXC5IAHSQ"
+
+identity <- read.table(...)
+
+
+path_to_zoo <- "https://raw.githubusercontent.com/kcilleros/tutoriel/master/dataexple.csv?token=AMF6JOO2B5MQ3SVWYFGHCGS5IAIOO"
+
+zoo <- read.table(...)
+
+```
+
+Pour vérifier que les deux tables sont bien chargées, on peut regarder les premières lignes de chaque tableau avec la fonction `head()` (de même pour les dernières avec `tail()`).
+
+```{r echo=TRUE}
+head(identity) #
+
+tail(zoo)
+```
+
+➤ Vérifiez la classe des différents variables de chaque tableau.
+
+```{r df-class, exercise = T}
+
+```
+
+Pour exporter les tables et autres objets, la fonction `write(object, file = "name.extension")` et ses descendantes (`write.table()`, `write.csv()`) permettent de créer des fichiers texte ou excel. 
+
+Quelques notes :
+
+- pour exporter une matrice avec `write`, il faut utiliser `write(t(matrice), file = "")` pour avoir dans le fichier la matrice sous le même format que dans R
+- les 'data.frame' ne sont pas exportables avec `write()`
+- `write.csv` est identique à la fonction `write.table()` ; seuls les arguments sont par défaut paramétrés pour créer un fichier csv
+
+### Load et save
+
+La fonction `load()` va de paire avec la fonction `save()`. `load` permet de charger les objets qui ont été exportés avec la `save`. Elles s'utilisent sous le format : `save(objet1, objet2, file = "name.RData")` et `load("name.RData")`. L'avantage par rapport aux `write` est que le fichier '.RData' peut contenir plusieurs objets de classes différentes.
+
+Les graphes classiques
+-------
+
+La fonction de base `plot()` va automatiquement regarder la classe des variables que vous souhaitez représenter et faire le graphe le plus adapté. Par exemple, si on veut représenter la quantité de nourriture consommée en fonction du nombre d'individus du tableau *zoo*, il faut écrire une des commandes parmi : 
+
+```{r echo = T, eval=FALSE}
+plot(x = zoo$Number.ind, y = zoo$Food.kg)
+plot(Food.kg ~ Number.ind, data = zoo)
+with(zoo, plot(Number.ind,Food.kg))
+with(zoo, plot(Food.kg ~ Number.ind))
+```
+
+```{r echo=FALSE}
+with(zoo, plot(Food.kg ~ Number.ind))
+```
+
+Il est ensuite possible de customiser pour faire changer les noms d'axe, afficher un titre, changer la taille et la forme des points.... Tout ce qui est possible de faire est bien résumer dans l'aide de la fonction `par()` (fonction qui gère les paramètres graphiques).
+
+
+➤ Jouez avec le code ci-dessous pour faire un graphe correct :
+
+```{r par-plot, exercise = T, exercise.eval=T}
+par(bg = "yellow", #couleur du fond
+    col.axis = "skyblue", #couleur du texte des axes
+    col.lab = "lightcoral"
+)
+
+with(zoo, plot(Food.kg ~ Number.ind, 
+               main = "Titre",#titre du graphe
+               col.main = "blue",#couleur du titre
+               xlab = "Axe X", #nom de l'axe X
+               ylab = "Axe Y", #nom de l'axe Y
+               pch = 17, #forme des points
+               col = "red", #couleur des points
+               cex = 2, #taille des points
+               fg = "green", #couleur de la boîte
+               xlim = c(-10,250), #limite de l'axe x (min, max)
+               ylim = c(0, 8e+7) #limite de l'axe y (min, max)
+               
+)
+)
+```
+
+
+Les autres types de graphes :
+
+- boxplot `boxplot()` : quantitatif ~ qualitatif
+
+```{r boxplt, echo=TRUE, exercise = T, exercise.eval=T}
+with(zoo, boxplot(log(Food.kg) ~ Animal,
+                  main = "Quantité de nourriture mangée par animal",
+                  xlab = "Animal",
+                  ylab = "Quantité de nourriture (en log kg)"))
+```
+
+- histogramme `hist()` : quantitatif
+
+```{r histplt, echo=TRUE, exercise = T, exercise.eval=T}
+with(zoo, hist(log(Food.kg),
+               main = "Distribution de la quantité de nourriture mangée",
+               xlab = "Quantité de nourriture (en log kg)",
+               ylab = "Fréquence"))
+```
+
+- barplot `barplot()` : quantitatif ~ qualitatif (1 valeur par groupe)
+
+```{r barplt, echo=TRUE, exercise = T, exercise.eval=T}
+with(zoo, barplot(unique(Size.cm),
+                  main = "Taille des animaux",
+                  xlab = "Animal",
+                  ylab = "Taille (cm)",
+                  names.arg = unique(Animal),
+                  col = c("#e8b475ff", "#1d9be9", "black", "#473529ff", "#fbde9fff", "#a6662aff") #les couleurs peuvent être codées sous format haxadécimal aussi
+                  )
+)
+```
+
+- pie chart `pie()` :
+
+```{r pieplt, exercise=TRUE, exercise.eval=T}
+
+with(zoo[1:6,], pie(Number.ind,
+                    labels = paste0(Animal, " (", sprintf("%1.2f%%", 100*Number.ind/sum(Number.ind)), ")"), #plus d'informations sur cette ligne dans l'aide
+                    col = c("#e8b475ff", "#1d9be9", "black", "#473529ff", "#fbde9fff", "#a6662aff"),
+                    main = "Proportion d'individus dans le zoo de Paris"))
+
+```
+
+```{r pieplt-hint-1}
+#paste0 : permet de coller des valeurs les unes avec les autres pour en faire une seule chaîne de caractères
+#sprintf : permet de formater des valeurs numériques, ici en pourcentage
+#sum : permet de faire la somme d'un vecteur
+```
+
+- Paires de nuage de points `pairs()` : 
+
+```{r pairplt, echo=TRUE, exercise = T, exercise.eval=T}
+pairs(zoo[,c("Size.cm", "Number.ind", "Food.kg")],
+    pch = 16)
+```
+
+
+### Légende
+
+Pour ajouter une légende sur un graphe (il faut d'abord avoir afficher un graphe), il faut utiliser la fonction `legend()`. Pour afficher les éléments d'une légende, il faut renseigner les formes et couleurs utilisées, ainsi que les groupes qui correspondent à chaque élément. La légende peut être positionnée en renseignant un couple (x,y) ou alors par une position absolu (haut droite, haut gauche, centre....).
+
+```{r legenplt, echo=TRUE, fig.height=7, exercise = T, exercise.eval=T}
+#Le graphique
+with(zoo, plot(log(Food.kg) ~ Number.ind,
+               pch = (15:19)[as.numeric(Zoo)],
+               col = Animal,
+               xlab = "Nombre d'individus",
+               ylab = "Quantité de nourriture mangée (log kg)",
+               xlim = c(0,200),
+               ylim = c(4,20),
+               cex = 1.5)
+     
+)
+
+
+#La légende pour le zoo
+with(zoo, legend("topleft", legend = levels(Zoo), pch = 15:19, horiz = T, title = "Zoo", cex = 0.75))
+
+#La légende pour les animaux
+with(zoo, legend("bottomleft", legend = levels(Animal), pch = 13, col = 1:nlevels(Animal), horiz = T, title = "Animal", cex = 0.75))
+
+```
+
+
+Quelques fonctions utiles
+-------
+
+Voici des fonctions qui seront utiles pour la suite :
+
+- `length()`
+
+- `head()` et `tail()`
+
+- `str()`
+
+- `install.packages()` et `library()` pour installer et charger des packages
+
+- `summary()` : permet d'avoir un résumé de l'objet. Pour un tableau, donne des statistiques de bases (moyenne, min et max, nombre d'observations par groupe...). 
+
+- `%>%` : disponible dans le package magrittr, cet outil est une *pipe* (si vous avez l'habitude de la bioinfo, c'est la même chose). En gros, si on écrit `data %>% head`, c'est équivalent à `head(data)`. Pour de courts codes, peu de changement, mais pour des suites de fonctions, cela permet d'avoir une lecture de gauche à droite plus facilement interprétable. Un exemple de son utilité :
+
+```{r echo=TRUE}
+
+library(magrittr)
+# On crée un vecteur x
+x <- c(0.109, 0.359, 0.63, 0.996, 0.515, 0.142, 0.017, 0.829, 0.907)
+
+# Chaîne de fonctions : calculer le logarithme de x, calculer la différence deux à deux, prendre l'exponentielle et arondir le résultat à 1 décimale
+# Classiquement, on écrit
+round(exp(diff(log(x))), 1)
+
+# Avec les pipes, on peut écrire la ligne comme :
+
+x %>% #x
+  log %>% # on calcule le logarithme
+  diff %>% # on calcule la différence
+  exp %>% # on calcule l'exponentielle
+  round(1) #on arrondi
+
+
+```
+
+Son utilisation est plus un choix personnel de codage, mais je pense que la logique de codage est plus claire de cette façon. C'est à vous de choisir.
+
+
+
+D'autres ici pour la suite : [AIDE MÉMOIRE R Référence des fonctions de R les plus courantes Mayeul KAUFFMANN](https://cran.r-project.org/doc/contrib/Kauffmann_aide_memoire_R.pdf)
