@@ -122,7 +122,7 @@ ggplot(data = zoo, aes(x = Number.ind, y = Food.kg)) +
   ylab("Nourriture consommée (en kg)")
 ```
 
-Si on compare les deux scripts, la majeure différence est que les arguments de `plot` deviennent des fonctions dans `ggplot`. Ensuite GGplot ne devine pas le meilleur graphe possible avec les variables renseignées, ce qui permet une plus grande flexibilité dnas les sorties.
+Si on compare les deux scripts, la majeure différence est que les arguments de `plot` deviennent des fonctions dans `ggplot`. Ensuite GGplot ne devine pas le meilleur graphe possible avec les variables renseignées, ce qui permet une plus grande flexibilité dans les sorties.
 
 Seul bémol pour GGplot : les données doivent nécessairement être sous format de 'data.frame' et en format long.
 
