@@ -1,0 +1,630 @@
+---
+title: "Analyses multivariées"
+output: 
+  learnr::tutorial:
+    progressive: false
+    theme: 'rstudio'
+runtime: shiny_prerendered
+fontsize: 22pt
+---
+
+```{r setup, include=FALSE}
+library(learnr)
+knitr::opts_chunk$set(echo = FALSE)
+library(ade4)
+library(MASS)
+library(rpart)
+library(vegan)
+```
+
+
+
+Avant-propos
+-------
+
+Dans la suite de documents html qui suit, voici quelques conventions que j'ai prise:
+
+- le texte normal
+- `les commandes R`
+- *les objets R*
+- $les\ quelques\ formules\ mathématiques$
+- ➤ indique que c'est à vous d'écrire/réfléchir pour obtenir ce qui vous est demandé
+
+La console de R est affichée comme suit, avec les sorties marquées ##. 
+```{r echo=TRUE}
+print("La console de R")
+```
+
+Le champ suivant vous permet d'écrire du code et de l'exécuter en cliquant sur Run code. Vous avez parfois des aides ou des astuces qui sont disponibles en cliquant sur le bouton Hint.
+
+```{r field, exercise=TRUE, exercise.eval=TRUE}
+
+```
+
+```{r field-hint-1}
+# Solution ou aide ici
+```
+
+A tout moment, vous pouvez faire `help(fonction)` ou `?fonction` pour obtenir de l'aide sur une fonction.
+
+GUSTA ME
+-----------
+Avant toute chose, voici une source d'information que je trouve très utile pour comprendre les concepts généraux des analyses multivariées : https://mb3is.megx.net/gustame/home.
+
+![](images/gustame.PNG){width=750px}
+
+
+Les analyses multidimensionnelles
+-----------
+
+<div style= "float:right;position: relative;">
+![](images/matrice.png){width=180px}
+</div>
+Les données mutltivariées ont la structure commune suivante :
+
+Chaque cellule de cette matrice (n "indidividus" x p "variables") contient une valeur $x_{ij}$ pour "l'individu" $i$ et la "variable" $p$.
+
+Cette matrice peut donc correspondre à de nombreux types de données :
+
+- la répartition d'espèces (sites x espèces)
+
+- des données environnementales (sites x mesures environnementales)
+
+- la morphométrie (individus x mesures morphométriques)
+
+- des données génétiques (espèces x locus)
+
+
+Avec ce genre de données, 2 démarches statistiques sont possibles :
+
+1. la statistique **exploratoire**, avec laquelle on cherche à décrire et structurer les données &rightarrow; méthodes d'ordination et de classification
+
+2. la statistique **inférentielle** , avec laquelle on cherche à expliquer les données &rightarrow; méthode de modélisation
+
+
+## L'approche descriptive
+
+Le but est de synthétiser et structurer l'information contenue dans les données, pour metter en évidence des propriétés des données ou suggérer des hypothèses.
+
+
+Deux classes de méthodes permettent de réaliser ce but : les méthodes factorielles et les méthodes de classification.
+
+### Les méthodes factorielles ou d'ordination
+
+<div style= "float:right;position: relative;">
+![](images/ordination.png){width=180px}
+</div>
+Pour décrire la structure des données en rapprochant les individus proches et en éloignant les individus dissemblables.
+
+Méthodes : 
+
+- l'Analyse en Composantes Principales
+
+- l'Analyse Factorielle des Correspondances
+
+- l'Analyse des Correspondances Multiples
+
+- l'Analyse de Co-inertie
+
+
+### Les méthodes de classification
+
+<div style= "float:right;position: relative;">
+![](images/classif.png){width=180px}
+</div>
+Pour créer des classes d'individus ou définir une typologie.
+
+Méthodes :
+
+- Apprentissage supervisé (les classes sont connues)
+
+- Apprentissage non supervisé (les classes ne sont pas connues)
+
+
+L'Analyse en Composantes Principales
+-----------
+
+Principal Components Analysis (PCA) en anglais
+
+<u>Principe :</u> Créer de nouvelles variables synthétiques à partir de combinaisons linéaires des variables initiales qui décrivent les directions principales des données 
+
+<u>Résumé de l'analyse :</u>
+
+1. Examiner les valeurs propres (% de la variation expliquée par chaque composante principale) pour déterminer le nombre d'axes à retenir
+
+2. Examiner la qualité de la représentation des variables et leur structure pour interpréter les axes
+
+3. Examiner la qualité de la représentation des individus et leur répartition pour identifier des individus "extrêmes" ou des groupes d'individus
+
+4. Interpréter conjointement les variables et les individus
+
+
+<u>Commandes utiles :</u> disponibles dans la librairie 'ade4'
+
+- `dudi.pca` : pour réaliser l'ACP
+
+- `barplot(eigenvalues)` : pour étudier les valeurs propres
+
+- `s.corcircle(variables)` : pour représenter les variables sur un plan
+
+- `plot(individus)` : pour étudier les individus
+
+- `scatter(acp)` : graphe global de l'ACP
+
+- `s.class(individus, groupe)` : si des groupes sont déjà connus, permet de classifier les individus à partir de ces groupes
+
+- `s.value(coordonnées, individus)` : permet de représenter les valeurs des individus par leur position géographique XY.
+
+### Étude d'une plaine côtière marécageuse : le Mafragh (Algérie)
+
+
+<div style= "float:right;position: relative;">
+![](images/mafragh.PNG){width=256px}
+</div>
+Le jeu de données *mafragh* contient des données environnementales et spatiales sur des espèces et des sites de la Mafragh.
+
+&nbsp;
+
+&nbsp;
+
+➤ Faire l'étude des données environnementales :
+
+```{r}
+data("mafragh")
+```
+
+```{r acp, exercise=TRUE, exercise.eval=TRUE, exercise.lines = 12}
+head(mafragh$env)
+```
+
+```{r acp-hint-1}
+#Aide pour interpréter :
+s.value(mafragh$xy, acp$li[,1], addaxes = F) #mafragh$xy : coordonnées des sites
+s.class(acp$li, mafragh$partition) #mafragh$partition : classement des relevés de végétation en 7 classes
+boxplot(acp$li[,1] ~ mafragh$partition)
+```
+
+
+L'Analyse Factorielle des Correspondances
+-----------
+
+Correspondence Analysis (PCA) en anglais
+
+<u>Principe :</u> Analyse les liens entre 2 variables qualitatives présentées dans un tableau de contingence, mais aussi applicable à d'autres tableaux (par exemple sites x espèces) tant que les valeurs sont positives. Une extension du $\chi$^2 qui permet une représentation géométrique du tableau.
+
+<u>Résumé de l'analyse :</u>
+
+1. Examiner les valeurs propres (% de la variation expliquée par chaque composante principale) pour déterminer le nombre d'axes à retenir
+
+2. Interpréter l'association des modalités des deux variables comme suit :
+
+- modalités au centre du nuage = modalité indépendente des autres
+
+- modalités regroupées = modalités + associées qu'attendu
+
+- modalités éloignées = répulsion des modalités
+
+
+<u>Commandes utiles :</u> disponibles dans la librairie 'ade4'
+
+- `dudi.coa` : pour réaliser l'AFC
+
+- `barplot(eigenvalues)` : pour étudier les valeurs propres
+
+- `scatter(afp)` : graphe global de l'AFP
+
+### Retour à Caithness :  la suite
+
+
+<div style= "float:right;position: relative;">
+![](images/Caithness.jpg){width=128px}
+</div>
+
+Précédemment, nous avions vu que la couleur des yeux et des cheveux n'étaient pas indépendent chez les individus de la région de Caithness (jeu de données *caith*). Nous allons maintenant voir quelles modalités sont les plus associées.
+
+&nbsp;
+
+➤ Faire l'étude du tableau de contingence par AFC :
+
+```{r}
+data("caith")
+```
+
+```{r afc, exercise=TRUE, exercise.eval=TRUE, exercise.lines = 12}
+caith
+```
+
+```{r afc-hint-1}
+#Comparer ces deux valeurs
+sum(afc$eig)
+chisq.test(caith)$statistic/sum(caith)
+```
+
+L'Analyse des Correspondances Multiples
+-----------
+
+Multiple Correspondence Analysis en anglais
+
+<u>Principe :</u> Analyse les liens entre plusieurs variables qualitatives mesurées chez différents individus. Chaque variable qualitative est transformée en $k$ colonne selon le nombre $k$ de modalités et chacune des $k$ modalités  est codée en 0/1. Ce nouveau tableau (appelé tableau disjonctif complet) est ensuite analysé par une AFC.
+
+<u>Résumé de l'analyse :</u>
+
+1. Examiner les valeurs propres (% de la variation expliquée par chaque composante principale) pour déterminer le nombre d'axes à retenir
+
+2. Interpréter l'association des modalités des deux variables comme suit :
+
+- modalités au centre du nuage = modalité indépendente des autres
+
+- modalités regroupées = modalités + associées qu'attendu
+
+- modalités éloignées = répulsion des modalités
+
+
+<u>Commandes utiles :</u> disponibles dans la librairie 'ade4'
+
+- `dudi.acm` : pour réaliser l'ACM
+
+- `barplot(eigenvalues)` : pour étudier les valeurs propres
+
+- `scatter.dudi(acm)` : graphe global de l'ACM
+
+- `scatter(acm)` : représentation de chacune des variables indépendemment
+
+### Présence des ours dans les Alpes
+
+
+<div style= "float:right;position: relative;">
+![](images/ours.jpg){width=180px}
+</div>
+
+Le jeu de données *ours* contient des informations sur la présence de l'ours et environnementales dans 38 zones des Alpes issues de l'Inventaire National Forestier.
+
+&nbsp;
+
+Description des variables :
+
+- altit : tranche d'altitude habitée par l'ours (1/ < 50% de la surface entre 800 et 2000 m, 2/ entre 50 et 70%, 3/ > 70%)
+
+- deniv : dénivelé moyen sur 50 km² (1/ < 700 m, 2/ entre 700 et 900 m, 3/ > 900 m)
+
+- cloiso : cloisonnement du massif (1/ une vallée ou une crête isole au moins 25% du massif, 2/ < 25% du massif est isolé, 3/ pas de coupure dans le massif)
+
+- domain : domaine forestier (1/ < 400 km², 2/ entre 400 et 1000 km², 3/ > 1000 km²)
+
+- boise : taux de boisement (1/ < 30%, 2/ entre 30 et 50%, 3/ > 50%)
+
+- hetra : hêtraies et forêts mixtes (1/ < 5%, 2/ entre 5 et 10%, 3/ > 10%)
+
+- favor : forêts favorables (1/ < 5%, 2/ entre 5 et 10%, 3/ > 10%)
+
+- inexp : forêts inexploitées (1/ < 4%, 2/ entre 4 et 8%, 3/ > 8%)
+
+- citat : présence de l'ours (1/ aucune citation depuis 1840, 2/ 1 à 3 citations avant 1900, aucune après, 3/ 4 citations avant 1900, aucune après, 4/ $\geqslant$ 4 citations avant 1900, $\geqslant$ 1 entre 1900 et 1940)
+
+- depart : département de la zone (AHP/ Alpes-de-Haute-Provence, AM/ Alpes-Maritimes, D/ Drôme, HP/ Hautes-Alpes, HS/ Haute-Savoie, I/ Isère, S/ Savoie)
+
+
+➤ On va s'intéresser aux liens entre la présence de l'ours et les autres variables. Faire cette étude avec une ACm :
+
+```{r}
+data("ours")
+```
+
+```{r acm, fig.height=8, fig.width=8, message=FALSE, warning=FALSE, exercise=TRUE, exercise.eval=TRUE, exercise.lines=12}
+for(i in c(1:8,10)){
+  print(colnames(ours)[i])
+  print(chisq.test(ours[,i], ours[,9]))
+}
+
+
+```
+
+```{r acm-hint-1}
+#Évaluation de la discrimination des modalités par les axes
+acm$cr
+
+```
+
+
+
+L'Analyse de Co-inertie
+-----------
+
+Co-inertia Analysis en anglais
+
+<u>Principe :</u> Étudier le lien entre deux tableaux en réalisant une double analyse d'inertie : la méthode cherche dans chaque tableau un axe de covariance maximale qui servent à définir un nouvel espace dans lequel les individus sont projetés.
+
+<u>Résumé de l'analyse :</u>
+
+1. Effectuer une analyse d'inertie sur chaque tableau
+
+2. Combiner les analyses dans une analyse de co-inertie
+
+3. Interpréter la position des individus dans le nouvel espace
+
+4. Tester la co-structure entre les tableaux par permutation
+
+
+<u>Commandes utiles :</u> disponibles dans la librairie 'ade4'
+
+- `coinertia` : pour réaliser l'analyse de co-inertie
+
+- `plot(coiner)` : pour avoir la vision d'ensemble des résultats : projection des composantes principales dans l'analyse de co-inertie, les valeurs propres, les combinaisons des coefficients pour chaque tableau qui définissent les axes de co-inertie, représentation des individus
+
+- `RV.rtest(pca1, pca2, n.perm)` : tester la co-structure 
+
+
+### Relation entre l'environnement et l'abondance des espèces de poissons
+
+
+<div style= "float:right;position: relative;">
+![](images/doubs.jpg){width=256px}
+</div>
+
+
+Le jeu de données *doubs* contient l'abondance en classe de 27 espèces de poissons (*doubs\$fish*) et les mesures de 11 variables environnemenales (*doubs\$env*). 
+
+On va étudier les relations entre ces deux jeux de données.
+
+➤ Faire l'analyse de co-inertie des deux tableaux :
+
+```{r}
+data("doubs")
+```
+
+```{r coin, exercise=TRUE, exercise.eval=TRUE, exercise.lines = 12}
+#Première étape : faire les deux ACP sur chacun des tableaux
+```
+
+
+
+L'apprentissage supervisé
+-----------
+
+Les objectifs sont de modéliser la relation entre les observations et la classification et identifier la classe d'appartenance d'un objet à partir de ses caractéristiques.
+
+Une approche très simple à la méthode des <u>K plus proches voisins</u> (K-nearest neighbor). Une donnée de classe inconnue est comparée à toutes les données déjà classées. On choisit pour la nouvelle donnée la classe majoritairement représentée par les K plus proches voisins.
+
+Un autre approche concerne les <u>arbres de décisions</u> qui sont des outils d'aide à la décision et qui visent à produire une procédure de classification interprétable.
+
+
+![](images/rtree.png){width=750px}
+
+<u>Commandes utiles :</u> disponibles dans la librairie 'rpart'
+
+- `rpart(classe ~ variables)` : pour réaliser un arbre de régression sur une classification
+
+- `predict(tree)` : donne la probabilité qu'un individu appartienne à une classe
+
+
+<div style= "float:right;position: relative;">
+![](images/iris.jpg){width=128}
+</div>
+Le jeu de données *iris* donne les mesures en centimètres de la longueur et la largeur des sépales et des pétales de 50 fleurs de 3 espèces d'iris : *Iris setosa*, *Iris versicolor*, *Iris virginica*.
+
+➤ Construire un arbre de régression qui donne l'espèce d'iris en fonction de la taille des sépales et des pétales :
+
+```{r}
+data("iris")
+```
+
+```{r rtree, exercise=TRUE, exercise.eval=TRUE, exercise.lines = 12}
+head(iris)
+```
+
+
+
+L'apprentissage non supervisé
+-----------
+
+Les objectifs sont de constituer $k$ groupes tels que les groupes soient contitués d'observations semblables et que ces groupes soient les plus différents possibles.
+
+Deux algorithmes sont possibles pour former ces groupes :
+
+- les méthodes non hiérachiques : construire $k$ partitions et les corriger jusqu'à obtenir une similarité satisfaisante
+
+- les méthodes hiérarchiques : créer une décompositions par agglomération ou division de groupes similaires ou dissimilaires
+
+### Une méthode non hiérarchique : K-means
+
+<u>Principe :</u> Découper un nuage de points en plusieurs sous-nuages selon la distance entre les points et le centre de gravité du groupe auquel appartient chaque point. L'objectif est de diminuer la dispersion intra-groupe.
+
+<u>Commandes utiles :</u> disponibles dans la librairie 'rpart'
+
+- `kmeans(donnée, k)` : pour réaliser un groupement
+
+
+➤ A partir des données crées ci-dessous, faire une classification en 2 groupes, puis en 5 groupes :
+
+```{r kmeans, exercise=TRUE, exercise.eval=TRUE, exercise.lines = 12}
+x <- rbind(matrix(rnorm(100, 0, 0.3), ncol = 2), matrix(rnorm(100, 1, 0.3), ncol = 2))
+```
+
+### Méthode hiérarchique :
+
+<u>Principe :</u> Le nombre de groupes attendu n'est pas précisé. La classification peut se faire par partitionnement de l'ensemble initial puis des groupes (hiérarchie descendante) ou par agglomération des individus puis des groupes (hiérarchie ascendante). Le partitionnement/agglomération se fait par calcul de distance entre les individus/groupes. Il faut donc au départ calculer la distance entre les individus.
+
+La hiérachie ascendante peut se faire selon différents critères d'agrégation qui utilisent différentes mesures distances entre les individus/objets. Le choix du critère se fait à partir de la mesure de la corrélation entre la distance initiale entre individus et la distance cophénétique (distance selon la classification).
+
+<u>Commandes utiles :</u>
+
+- `dist` : pour calculer une matrice de distance entre individus
+
+- `hclust` : pour faire une classification hiérarchique ascendante
+
+- `cutree` : pour faire des groupes à partir d'une classification ascendante
+
+- `cophenetic` : pour obtenir la distance entre individus dans une classification 
+
+- `mantel` : pour tester une corrélation entre matrices de disatnces (libraire 'vegan')
+
+
+<div style= "float:right;position: relative;">
+![](images/oiseau.jpg){width=128}
+</div>
+Le jeu de données *ecomor* contient l'alimentation (*ecomor$diet*), des mesures morphologiques (*ecomor$morpho*) et le type d'habitat (*ecomor$habitat* ; Bu/ Bourgogne, Ca/ Californie, Ch/ Chili, Pr/ Provence) pour 129 espèces d'oiseaux vivant dans des régions méditerranéennes échantillonés dans 16 sites.
+
+```{r}
+data("ecomor")
+```
+
+➤ Les espèces morphologiquement proches ont-elles des régimes alimentaires similaires ?
+
+```{r clust1, message=FALSE, warning=FALSE, exercise=TRUE, exercise.eval=TRUE, exercise.lines=12}
+
+
+```
+
+
+➤ Classer les sites d'études en fonction des espèces qu'ils contiennent en utilisant le critère d'agrégation de Ward.
+
+```{r clust2, message=FALSE, warning=FALSE, exercise=TRUE, exercise.eval=TRUE, exercise.lines=12}
+
+
+```
+
+➤ Classer les espèces selon leur morphologie.
+
+```{r clust3, message=FALSE, warning=FALSE, exercise=TRUE, exercise.eval=TRUE, exercise.lines=12}
+
+
+```
+
+
+## L'approche inférentielle
+
+Le but est d'étendre les propriétés d'un échantillon à la population en testant des hypothèses *a priori*.
+
+Selon le type de la variable à expliquer, deux groupes d'approches existent : les méthodes de régression (variable quantitative) et les méthodes de discrimination (variable qualitative).
+
+### Les méthodes de régression
+
+<div style= "float:right;position: relative;">
+![](images/regression.png){width=180px}
+</div>
+Correspond aux modèles linéaires et non linéaires (cf. cours Tests et régressions).
+
+Il est aussi possible d'utiliser des arbres de décision.
+
+&nbsp;
+
+&nbsp;
+
+
+### Les méthodes de discrimination
+
+<div style= "float:right;position: relative;">
+![](images/discrimin.png){width=180px}
+</div>
+Pour prédire l'appartenance à un groupe.
+
+Méthodes :
+
+- les arbres de décision
+
+- l'Analyse Factorielle Discriminante
+
+### Le cas où la variable à expliquer est une matrice
+
+Par exemple, expliquer la composition des communautés.
+
+Méthodes :
+
+- Analyse Canonique des Correspondances
+
+
+L'Analyse Factorielle Discriminante
+-----------
+
+Linear Discriminant Analysis (LDA) en anglais
+
+
+<u>Principe :</u> Extension de la régression multiple à une variable dépendante qualitative où les groupes sont prédéfinis (a priori ou par classification). Elle permet de différencier les groupes et d'affecter un individu à un groupe avec une probabilité selon ses caractéristiques. On cherche des fonctions discriminantes ou axes factoriels (combinaisons linéaires des variables) qui maximise le rapport $\frac{\sigma^2 inter-groupes}{\sigma^2 intra-groupes}$.
+
+On peut évaluer la qualité de la discrimination en regardant par exemple le pourcentage de mauvais classement grâce au calcul de la distance de Mahalanobis entre les individus et les centres des groupes.
+
+<u>Commandes utiles :</u>
+
+- `discrimin(pca, groupe)` : faire l'AFD sur une analyse d'inertie avec les groupes donnés
+
+- `s.arrow(afd$fa)` : montre la contribution des variables aux axes de l'AFD
+
+- `s.class(afd$li, groupe)` : représente les individus dans l'espace factoriel selon leur groupe
+
+- `rtest.discrimin` : pour tester si la discrimination est significative en redistribuant les individus au hasard dans les groupes
+
+- `lda` : permet de construire le modèle correspondant à l'AFD (librairie 'MASS')
+
+- `predict(lda)` : donne la probabilié d'appartenir aux groupes (*\$posterior*) ainsi que le groupe avec la plus forte probabilité (*\$class*) pour chaque individu.
+
+- `lda(..., CV = TRUE)` : permet de faire une validation croisée de la discrimination. On enlève 1 individu dont on connait le groupe, on construit le modèle et on prédit ensuite le groupe de l'individu enlevé pour obtenir la qualité du classement.
+
+- `table(groupe.observé, lda$class)` : donne une table de contingence du nombre d'individus des groupes observés vs groupes prédits
+
+
+<div style= "float:right;position: relative;">
+![](images/crabs.jpg){width=128px}
+</div>
+
+De retour sur le jeu de données *crabs*, on va maintenant évaluer la performance d'une discrimination des morphes de crabes en fonction de leur morphologie. Pour rappel, sur chaque individu, la taille du lobe frontal (FL), la largeur de la partie postérieure (RW), la longueur (CL) et le poids (CW) de la carapace, l'épaisseur du corps (BD), la couleur (Bleu ou Orange) et le sexe ont été relevés.
+
+➤ Étudier la discrimination des groupes de crabes en fonction de la morphologie des individus et évaluer la qualité prédictive de cette discrimination.
+
+
+```{r}
+data("crabs")
+```
+
+```{r afd, fig.height=8, fig.width=8, message=FALSE, warning=FALSE, exercise=TRUE, exercise.eval=TRUE, exercise.lines=12}
+groupe <- crabs$sp:crabs$sex
+
+acp.crabs <- dudi.pca(crabs[,4:8], scannf = F, nf = 2)
+
+```
+
+
+L'Analyse Canonique des Correspondances
+-----------
+
+Canonical Correspondence Analysis (CCA) en anglais
+
+<u>Principe :</u>L'ACC est une méthode de couplage de tableaux (au même titre que l'analyse de co-inertie). Son objectif est d'expliquer à partir d'un tableau le second. En écologie, c'est la méthode la plus populaire pour expliquer la répartition d'espèces à partir de variables environnementales. La méthode consiste à réaliser une AFC sur le tableau des espèces et une ACP sur le tableau environnement. L'ACC recherche ensuite les combinaisons linéaires des variables de milieu qui maximisent la dispersion des espèces.
+
+La représentation graphique de l'analyse donne la position d'un point-site comme étant la moyenne des espèces qu'il contient et la position d'un point-espèce comme la moyenne des sites qui contiennent l'espèce.
+
+Pour avoir une bonne interprétation, il faut idéalement 10 fois plus de sites que de variables.
+
+<u>Commandes utiles :</u>
+
+ - `cca(y ~ x1 + x2)` : pour écrire le modèle de l'ACC
+ 
+ - `anova(cca)` : pour tester la significativité de l'ACC
+ 
+ - `anova(cca(y ~ x1 + Condition(x2 + x3)))` : permet de tester l'effet d'une variable suplémentaire
+
+<div style= "float:right;position: relative;">
+![](images/reindeer.jpg){width=128px}
+</div>
+Les jeux de données *varechem* et *varespec* contiennent les mesures chimiques et la composition en espèces de 24 sites situés dans des forêts de pins où des rennes sont présents.
+
+Listes des mesures chimiques : [N], [P], [K], [CA], [MG], [S], [Al], [Fe], [Mn], [Zn], [Mo], sol nu, épaisseur de la couche humique, pH 
+
+➤ Évaluer l'effet de l'environnement sur la composition en espèces sur ces sites ? Peut-on avoir dégager des variables qui ont plus d'effet que d'autres ?
+
+```{r}
+data("varechem")
+data("varespec")
+```
+
+```{r ccacoln, fig.height=8, fig.width=8, message=FALSE, warning=FALSE, exercise=TRUE, exercise.eval=TRUE, exercise.lines=12}
+
+```
+
+Bonus sur les représentations de matrices de distance : ACoP et NMDS
+-----------
+
+Il est possible de résumer des matrices de distances avec des analyses similaires à celles vues avant. Par exemple, l'équivalent d'une ACP sur une matrice de distances correspond à l'Analyse en Coordonnées Principales (Principal Coordinates Analysis). L'avantage est que quelque soit la distance utilisée, la ACoP sera capable de la prendre en compte. Seul problème, l'analyse ne peut représenter que les composantes euclidiennes d'une matrice même si cette dernière contient des mesures non-euclidiennes. Dans R, la fonction `pcoa` dans la librairie 'ape' permet de faire cette analyse.
+
+Une autre analyse basée sur les matrices de distances est le positionnement multidimensionnel non métrique (non-metric multidimensional scaling). La NMDS ne se base pas sur la distance originale, mais sur les rangs des distances, ce qui permet de représenter des données avec une distribution peu reconnaissables. Dans R, la fonction `metaMDS` de la librairie 'vegan' permet de faire cette analyse sur une matrice de distance, ou à partir des données brutes.
+
+Les deux méthodes ont quelques différences (résumé : http://biol09.biol.umontreal.ca/PLcourses/Comparison_nMDS_PCoA.pdf). Principalement, le résultat donné par une ACoP est unique alors que la solution de la NMDS est trouvé par un algorithme itératif donc la solution n'est pas unique. Elle permet cependant d'avoir une bonne représentation des distances sur un nombre plus réduits d'axes (souvent 2 à 3) alors que la ACoP nécessite souvent plusieurs axes.
