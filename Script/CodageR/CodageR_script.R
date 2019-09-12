@@ -1,0 +1,508 @@
+#' ---
+#' title: "Tests, itérations, boucles, fonctions"
+#' output: 
+#'   learnr::tutorial:
+#'     progressive: false
+#'     theme: 'rstudio'
+#' runtime: shiny_prerendered
+#' fontsize: 22pt
+#' ---
+#' 
+## ----setup, include=FALSE------------------------------------------------
+library(learnr)
+require(picante)
+require(primes)
+knitr::opts_chunk$set(echo = TRUE)
+
+is.in.Fibonacci <- function(x){
+  condlow <- sqrt(5*x^2-4)%%1 == 0
+  condhigh <- sqrt(5*x^2+4)%%1 == 0
+  
+  return(condlow|condhigh)
+  
+}
+
+# is_prime <- function(n) n == 2L || all(n %% 2L:ceiling(sqrt(n)) != 0)
+
+
+
+#' 
+#' 
+#' Avant-propos
+#' -------
+#' 
+#' Dans la suite de documents html qui suit, voici quelques conventions que j'ai prise:
+#' 
+#' - le texte normal
+#' - `les commandes R`
+#' - *les objets R*
+#' - $les\ quelques\ formules\ mathématiques$
+#' - ➤ indique que c'est à vous d'écrire/réfléchir pour obtenir ce qui vous est demandé
+#' 
+#' La console de R est affichée comme suit, avec les sorties marquées ##. 
+## ----echo=TRUE-----------------------------------------------------------
+print("La console de R")
+
+#' 
+#' Le champ suivant vous permet d'écrire du code et de l'exécuter en cliquant sur Run code. Vous avez parfois des aides ou des astuces qui sont disponibles en cliquant sur le bouton Hint.
+#' 
+## ----field, exercise=TRUE, exercise.eval=TRUE----------------------------
+
+
+#' 
+## ----field-hint-1--------------------------------------------------------
+# Solution ou aide ici
+
+#' 
+#' A tout moment, vous pouvez faire `help(fonction)` ou `?fonction` pour obtenir de l'aide sur une fonction.
+#' 
+#' 
+#' If, if/else
+#' -------------
+#' Pour effectuer une suite de commandes selon le résultat d'un test logique, on utilise l'algorithme '<u>si</u> condition vraie <u>alors</u> faire instruction' ou une forme avec une alternative '<u>si</u> condition vraie <u>alors</u> faire instruction, <u>sinon</u> faire intruction'.
+#' 
+#' Dans R, ces algorithmes se traduisent avec les fonctions `if` et `else` :
+#' `if(condition){commandes si vrai}` et `if(condition){commandes si vrai}else{commandes si faux}`.
+#' 
+#' Dans le cas où seulement `if` est utilisé, si la condition est fausse, rien ne sera exécuté. 
+#' 
+#' Avec les exemples les plus basiques (i.e. en renseignant directement la condition comme vraie ou fausse), on obtient : 
+#' 
+## ----echo=TRUE-----------------------------------------------------------
+#condition vraie donc affiche "vrai"
+if(TRUE){
+  cat("Vrai")
+}
+
+## ----echo=TRUE-----------------------------------------------------------
+#condition fausse donc n'affiche rien
+if(FALSE){
+  cat("Vrai")
+}
+
+## ----echo=TRUE-----------------------------------------------------------
+#condition vraie donc affiche "vrai"
+if(TRUE){
+  cat("Vrai")
+}else{
+  cat("Faux")
+}
+
+## ----echo=TRUE-----------------------------------------------------------
+#condition fausse donc affiche "faux"
+if(FALSE){
+  cat("Vrai")
+}else{
+  cat("Faux")
+}
+
+#' 
+#' Il est possible d'emboîter les conditions et donc de créer des syntaxes de type '<u>si</u> condition 1 vraie <u>alors</u> faire instruction 1, <u>sinon</u> <u>si</u> condition 2 vraie <u>alors</u> faire instruction 2, <u>sinon</u> faire intruction 3'.
+#' 
+#' ➤ A partir du bout de code ci-dessous, écrire des tests logiques pour représenter l'abre de décision suivant :
+#' 
+#' ![](images/tree.png){width=750px}
+#' 
+## ----tree_if, exercise=TRUE, exercise.eval=TRUE, exercise.lines=12-------
+library(primes)
+x <- 12
+
+if(is_prime(x)){
+  if(is.in.Fibonacci(x)){
+    cat(x, "est un nombre premier compris dans la suite de Fibonacci")
+  }
+}else{
+  cat(x, "est un nombre non premier")
+}
+
+#' 
+## ----tree_if-solution----------------------------------------------------
+if(is_prime(x)){
+  if(is.in.Fibonacci(x)){
+    cat(x, "est un nombre premier compris dans la suite de Fibonacci")
+  }else{
+    cat(x, "est un nombre premier non compris dans la suite de Fibonacci")
+  }
+}else{
+  if(x%%2 == 0){
+    cat(x, "est un nombre pair non premier")
+  }else{
+    cat(x, "est un nombre impair non premier")
+  }
+}
+
+#' 
+#' While
+#' -------------
+#' La fonction `while` correspond à l'algorithme '<u>tant que</u> condition vraie, faire instruction'.
+#' 
+#' En langage R, on le traduit en : `while(condition){commandes si vrai}`
+#' 
+#' Par exemple :
+#' 
+## ----echo=TRUE-----------------------------------------------------------
+x <- y <- 0
+while(x < 10){
+  cat("x : ", x, "\n");
+  cat("y : ", y, "\n");
+  x <- x+1;
+  y <- c(y, tail(y, 1)+1)
+}
+
+#' 
+#' Il faut faire bien attention en utilisant le `while` car on peut créer des calcul infini en se trompant.
+#' 
+#' For
+#' -------------
+#' Lorsqu'on connait le nombre de cycles à faire ou pour parcourir un objet ou une structure, on peut utiliser un algorithme similaire à `while` qui est '<u>pour</u> indice dans element, faire instruction'.
+#' 
+#' Traduction en R : `for(index in sequence){commandes}`.
+#' 
+#' Pour obtenir le même résultat que précédemment (afficher les chiffres), on écrit :
+#' 
+## ----echo=TRUE-----------------------------------------------------------
+for(i in 0:9){
+  print(i)
+}
+
+#' 
+#' La boucle `for` a une grande flexibilité et permet de boucler aussi sur des vecteurs, tableaux, listes...
+#' 
+## ----echo=TRUE-----------------------------------------------------------
+sequence <- seq(0,10,2)
+
+for(i in sequence){
+  print(i)
+}
+
+
+#' 
+## ----echo=TRUE-----------------------------------------------------------
+matrice <- matrix(c(1,2,3, 11,12,13), nrow = 2, ncol = 3, byrow = TRUE,
+                  dimnames = list(c("row1", "row2"),
+                                  c("C.1", "C.2", "C.3")))
+
+for(i in matrice){
+  print(sqrt(i))
+}
+
+
+## ----echo=TRUE-----------------------------------------------------------
+tableau <- data.frame(x = 1, y = 1:10)
+
+for(i in tableau){
+  print(i)
+}
+
+
+#' 
+#' A la place d'afficher chaque élément d'une boucle, on peut effectuer des opérations sur chaque élément (utilisation prindipale).
+#' 
+#' ➤ Compléter la boucle suivante pour que *y* soit un vecteur (classe character) qui décrit pour chaque valeur de *x* si le nombre est premier ou non :
+#' 
+#' 
+## ----forexe, exercise=TRUE, exercise.eval=F, exercise.lines = 13---------
+x <- floor(runif(n = 10, 0, 65536)) #génération de nombre entier aléatoire
+y <- vector("character", length = length(x)) #création d'un vecteur vide
+
+for(i in ...){
+  if(...){
+    ... <- "prime"
+  }else{
+    ... <- "non prime"
+  }
+}
+
+data.frame(x, y)
+
+#' 
+## ----forexe-solution-----------------------------------------------------
+for(i in 1:length(x)){
+  if(is_prime(x[i])){
+    y[i] <- "prime"
+  }else{
+    y[i] <- "non prime"
+  }
+}
+
+#' 
+#' 
+#' Repeat
+#' -------------
+#' 
+#' Une autre boucle consister à répéter des instructions jusqu'au remplissage d'une condition.'<u>répéter</u> instruction <u>jusqu'à</u> condition de fin'. C'est un peu comme le `while`, sauf que la condtion d'arrêt est évaluée après les instructions.
+#' 
+#' En langage R : `repeat{commande}`. La fonction `repeat` a une strucure particulière : en effet, il n'y a pas de formalisation du "jusqu'à". Il faut donc faire intervenir des fonctions supplémentaires pour stopper l'itération : `break` ou `stop()`.
+#' 
+#' 
+#' Un exemple
+## ----echo=TRUE-----------------------------------------------------------
+x <- 0
+
+repeat{
+  cat(x, "avant commande\n")
+  x <- x + 1
+  cat(x, "après commande\n")
+  if(x == 5) {break}
+  
+}
+
+
+#' 
+#' 
+#' ➤ Voici un code qui simule un petit jeu. Cependant, il est pour le moment bugué. A vous de le débuguer. (Copiez les lignes ci-dessous dans une session locale de R)
+#' 
+## ----eval=FALSE----------------------------------------------------------
+## point <- 0
+## past.nb <- NULL
+## require(primes)
+## 
+## repeat{
+##   if(point == 0){
+##     cat("Un petit jeu : donner un maximum de nombres premiers sans les répéter. 1 point par bonne réponse")
+##   }
+##   nb <- as.numeric(readline("Donner un nombre : "))
+##   if(nb %in% past.nb){
+##     cat("BZZZZZZZZZZT. Nombre déjà essayé.\n")
+##     cat("GAME OVER. Vous avez obtenu", point, "point(s).\n")
+##   }else{
+##     if(is_prime(nb)){
+##       cat("Bonne réponse. +1 point\n")
+##       past.nb <- c(past.nb, nb)
+##       point <- point + 1
+##     }else{
+##       cat("BZZZZZZZZZZT. Faux\n")
+##       cat("GAME OVER. Vous avez obtenu", point, "point(s).\n")
+##     }
+##   }
+## }
+
+#' 
+#' 
+#' Apply
+#' -------------
+#' Il existe de nombreuses alternatives aux boucles dans R qui sont souvent plus rapides. Parmi elles, la famille de fonctions des `apply` permet d'itérer des commandes sur chaque élément d'un vecteur, d'une liste... (Même le calcul vectoriel est plus rapide que les boucles.)
+#' 
+#' 
+#' Par exemple, pour calculer la moyenne de chaque colonne du tableau *zoo*, 
+#' 
+## ----echo=FALSE----------------------------------------------------------
+link_to_tab2 <-"https://raw.githubusercontent.com/kcilleros/tutoriel/master/dataexple.csv?token=AMF6JOO2B5MQ3SVWYFGHCGS5IAIOO"
+zoo <- read.csv(link_to_tab2, sep = ";", h = T, dec = ",")
+zoo
+
+#' 
+#' 
+#' - avec une boucle `for` : ➤ Codez le.
+#' 
+## ----for-zoo, exercise = T, exercise.eval=FALSE, exercise.lines = 6------
+for(... in ...){
+  ...
+}
+
+#' 
+#' - avec un `apply` :
+#' 
+## ------------------------------------------------------------------------
+apply(zoo[,c(3,4,6)], 2, mean)
+
+#' 
+#' - avec une fonction (`colMeans`)
+## ------------------------------------------------------------------------
+colMeans(zoo[,c(3,4,6)])
+
+#' 
+#' 
+#' 
+#' Une des grandes forces de la famille `apply` est de pouvoir passer des fonctions customisées comme argument (quand la fonction n'existe pas de base). Nous verrons plus tard comment écrire en détail une fonction mais voici un exmple qui prend le dernier élément de chaque composant d'une liste :
+#' 
+## ------------------------------------------------------------------------
+(list.x <- list(a = rnorm(10), b = rpois(12, lambda = 1), c = runif(8)))
+
+lapply(list.x, function(x) {
+  x[length(x)]
+})
+
+#' 
+#' Une utilité graphique des `apply` est de pouvoir faire des graphes univariés assez rapidement sur un grand nombre de variables :
+#' 
+## ----echo=T, message=FALSE, warning=FALSE--------------------------------
+aa <- apply(zoo[,c(3,4)], 2, hist)
+
+#' 
+#' Un `apply` direct ne permet d'avoir le nom des variables. La solution est de passer par `sapply`, et d'utiliser un vecteur de numeric comme entrée. Dans ce cas, la fonction sera appliquée à chaque valeur numérique.
+#' 
+## ----echo=T, message=FALSE, warning=FALSE--------------------------------
+bb <- sapply(3:4, function(x) {hist(zoo[,x], main = colnames(zoo)[x])})
+
+#' 
+#' 
+#' Replicate
+#' -------------
+#' 
+#' Pour répéter un grand nombre de fois une fonction, on peut utiliser la fonction `replicate` (très utile pour les simulations et les modèles nuls de communauté). Par exemple, pour générer 10 tirages à partir d'un même set initial :
+#' 
+## ------------------------------------------------------------------------
+replicate(10, sample(10))
+
+#' 
+#' L'avantage est que la sortie de la fonction est sous un format qui peut rapidement être analyséé.
+#' 
+#' ➤ Quel est le nombre qui est sorti le plus de fois en premier ? en dernier ? Quel est la moyenne pour chaque étape du tirage ?
+#' 
+## ----replicate, exercise=TRUE, exercise.eval=TRUE------------------------
+
+
+#' 
+## ----replicate-hint-1----------------------------------------------------
+# Les deux premières sont faciles. 
+# Pour la dernière, trois façons de l'obtenir (ça vous rappelle quelque chose ?).
+
+
+#' 
+#' La génération de matrices randomisées et leur analsyes sont grandement facilitées. En effet, les matrices créées sont stockées sous forme d'array de dimension 3.
+#' 
+## ----message=FALSE-------------------------------------------------------
+(matrice2 <- matrix(sample(0:1, 24, TRUE), ncol = 6))
+(random.matrix <- replicate(3, picante::randomizeMatrix(matrice2, null.model = "trialswap")))
+
+#' 
+#' Maintenant, pour faire la somme de chaque cellule sur la dimension 3 :
+#' 
+## ----array-apply, exercise=TRUE, exercise.eval=TRUE----------------------
+apply(random.matrix, 1:2, sum)
+
+#' 
+#' 
+#' Function
+#' -------------
+#' 
+#' R et ses différents packages sont remplis de tout un tas de fonctions (+ ou - complexes et longues). Elles permettent souvent de se dispenser d'écrire des boucles qui alourdissent les scripts et sont parfois plus gourmandent en ressource. 
+#' 
+#' Pour écrire une fonction, la syntaxe R est la suivant :
+#' 
+## ----fsyntax, exercise=TRUE, exercise.eval=F-----------------------------
+
+# nom.fonction <- function(argument.1, argument.2, ...){
+#   suite de commandes qui fait intervenir (ou non) les arguments
+#   return(objets à sortir)
+# }
+
+
+#' 
+#' Si on regarde la fonction is.in.Fibonacci utilisée au début :
+#' 
+## ------------------------------------------------------------------------
+is.in.Fibonacci
+
+#' 
+#' On a 1 argument dans la fonction : x. Ensuite des lignes de commandes calculent deux valeurs logiques à partir de x (*condlow* et *condhigh*). La fonction renvoie en sortie l'objet logique *condlow|condhigh* (qui signifie *condlow* ou *condhigh*).
+#' 
+#' On va voir ici que ce n'est pas si difficile d'écrire des fonctions. Une première étape, quand on sait pas quoi faire, c'est d'écrire une boucle qui fait ce qu'on veut et puis voir ensuite si c'est possible de la transformer en fonction.
+#' 
+#' Par exemple, imaginons qu'on veuille calculer les 5 premières puissances (de 2 à 6) d'un nombre donné et les stocker dans un vecteur. 
+#' 
+#' - De façon brute :
+#' 
+## ------------------------------------------------------------------------
+x <- 2
+(y <- c(x^2,x^3,x^4,x^5,x^6))
+(y <- x^(2:6))
+
+#' 
+#' - Avec une boucle :
+#' 
+## ----power-for, exercise=TRUE, exercise.eval=TRUE------------------------
+
+
+#' 
+## ----power-for-solution--------------------------------------------------
+y <- vector("numeric", 5)
+for(pwr in 2:6){
+  y[pwr-1] <-  x^pwr
+}
+y
+
+#' 
+#' - Avec un sapply : 
+#' 
+## ----power-app, exercise=TRUE, exercise.eval=TRUE------------------------
+
+
+#' 
+## ----power-app-solution--------------------------------------------------
+sapply(2:6, function(y) x^y)
+
+#' 
+#' Avec la dernière solution on se rapproche un peu de la logique qu'on souhaite avoir dans la fonction.
+#' 
+## ----fpwr, exercise=TRUE, exercise.eval=TRUE-----------------------------
+
+
+#' 
+## ----fpwr-solution-------------------------------------------------------
+power.fonction <- function(nb, pwr.min, pwr.max){
+  result <- nb^(pwr.min:pwr.max)
+  return(result)
+}
+
+#' 
+#' 
+#' A partir de là, on peut retourner voir les boucles et itérations qu'on a construites depuis le début. Certaines sont facilement convertibles en fonction....
+#' 
+#' 
+## ----free, , exercise=TRUE, exercise.eval=FALSE, exercise.lines = 10-----
+
+
+#' 
+#' 
+#' 
+#' Bonus de travail sur les fonctions
+#' -------------
+#' 
+#' Pour conclure cette leçon, on va essayer de créer une fonction qui va représenter graphiquement une croissance logistique d'une population en temps discret. Pour rappel, une équation utilisée pour une croissance logistique en temps discret est : $N_{t+1} = N_{t} + rN_{t}(1- \frac{N_{t}}{K})$. La sortie finale ressemblera à ça :
+#' 
+## ----echo=FALSE----------------------------------------------------------
+logistic.growth <- function(N0, r, K, tmax)
+{
+  N <- vector("numeric", tmax+1)
+  N[1] <- N0
+  for (t in 1:tmax){
+    N[t+1] <- floor(N[t] + r*N[t]*(1-N[t]/K))
+  }
+  Temps <- 0:tmax
+  plot(N ~ Temps, 
+       type="l", 
+       main = bquote("Croissance logistique (N"[0] == .(N0) ~ ", r" == .(r) ~ ", K" == .(K)*")"),
+       ylim = c(0, max(K,N)))
+  points(Temps, N)
+  abline(h = K, col = "gray" , lty = "dashed")
+}
+
+logistic.growth(N0 = 50, r = 0.15, K = 1000, tmax = 60)
+
+#' 
+#' 
+## ----logpopgwth, exercise=TRUE, exercise.eval=TRUE, exercise.lines = 12----
+
+
+#' 
+## ----logpopgwth-solution-------------------------------------------------
+logistic.growth <- function(N0, r, K, tmax)
+{
+  N <- vector("numeric", tmax+1)
+  N[1] <- N0
+  for (t in 1:tmax){
+    N[t+1] <- N[t] + r*N[t]*(1-N[t]/K)
+  }
+  Temps <- 0:tmax
+  plot(N ~ Temps, 
+       type="l", 
+       main = bquote("Croissance logistique (N"[0] == .(N0) ~ ", r" == .(r) ~ ", K" == .(K)*")"),
+       ylim = c(0, K))
+  points(Temps, N)
+  abline(h = K, col = "gray" , lty = "dashed")
+}
+
+
+#' 
