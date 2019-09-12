@@ -5,3 +5,6 @@
  3. Tests et régressions : corrélations, tests d'hypothèse et régression https://kcilleros.shinyapps.io/Testsetregressions/
  4. Les analyses multivariées : descriptif, inférence https://kcilleros.shinyapps.io/Multivariees/
  5. GGplot2 : La syntaxe, les graphes classiques, les graphes intéractifs https://kcilleros.shinyapps.io/GGplot2/
+
+
+Le dossier Script contient un fichier .R et un fichier .Rmd pour l'accès au code.
