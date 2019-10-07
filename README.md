@@ -8,3 +8,6 @@
 
 
 Le dossier Script contient un fichier .R et un fichier .Rmd pour l'accès au code.
+
+
+Le fichier FormationR.zip contient tous les fichiers pour lancer les cours. Il vous suffit de compiler le document .Rmd dans RStudio.
